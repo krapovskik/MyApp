@@ -1,0 +1,13 @@
+{% extends 'zayshop/base.html' %}
+{% block Title %}
+    Home
+{% endblock %}
+{% block body %}
+    <div class="jumbotron text-center" style="background: rgba(160, 160, 160,0.3);position: absolute;margin-top: 10%;margin-left: 20%;border-radius: 5px;padding: 5% 5% 5% 5%">
+        <h1 style="color: white;">
+            We have best pizza in the city!
+        </h1>
+        <a href="{% url 'zayshop:order' %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true" style="margin-top: 5%;">Order your favourite food</a>
+    </div>
+
+{% endblock %}

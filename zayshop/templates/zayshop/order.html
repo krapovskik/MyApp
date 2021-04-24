@@ -1,0 +1,50 @@
+{% extends 'zayshop/base.html' %}
+{% block Title %}
+    Order
+{% endblock %}
+{% block body %}
+    {% if error_message %}
+        <div class="container" style="text-align: center;background-color: black;border-radius: 10px;margin-top: 2% ">
+            <h1 style="color: white">{{ error_message }}</h1>
+        </div>
+    {% endif %}
+    <div class="container">
+            {% for food in food_list %}
+                <div class="col-sm-4 col-lg-2" style="margin-top: 5%;">
+                                <div class="thumbnail">
+                                    <a href="#">
+                                        <img src="{{ food.food_photo.url }}" class="img-responsive" style="width: 300px;height: 150px;">
+                                    </a>
+                                    <div class="caption">
+                                        <h2>{{ food.food_name }}</h2>
+                                        <h4>{{ food.food_price }}€</h4>
+
+                                        <!-- Add to cart -->
+                                        <a href="{% url 'zayshop:add_to_cart' food.id food.food_name %}" class="btn btn-primary btn-sm" role="button">Add to cart</a>
+
+                                    </div>
+                                </div>
+                            </div>
+            {% endfor %}
+        </div>
+        <div class="container">
+            {% for drink in drink_list %}
+                <div class="col-sm-4 col-lg-2" style="margin-top: 5%;">
+                                <div class="thumbnail">
+                                    <a href="#">
+                                        <img src="{{ drink.drink_photo.url }}" class="img-responsive" style="width: 300px;height: 150px;">
+                                    </a>
+                                    <div class="caption">
+                                        <h2>{{ drink.drink_name }}</h2>
+                                        <h4>{{ drink.drink_price }}€</h4>
+
+                                        <!-- Add to cart -->
+                                        <a href="{% url 'zayshop:add_to_cart' drink.id drink.drink_name %}" class="btn btn-primary btn-sm" role="button">Add to cart</a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+            {% endfor %}
+        </div>
+{% endblock %}

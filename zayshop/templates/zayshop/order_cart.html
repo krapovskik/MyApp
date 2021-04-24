@@ -1,0 +1,13 @@
+{% extends 'zayshop/base.html' %}
+{% block Title %} Order-cart {% endblock %}
+{% block body %}
+    <div class="container" style="background-color: #999999;border-radius: 10px;">
+        {% for food in user.cartitemfood_set.all %}
+            <h1 style="color: white;">{{ food }}</h1>
+        {% endfor %}
+        {% for drink in user.cartitemdrink_set.all %}
+            <h1 style="color:white;">{{ drink }}</h1>
+        {% endfor %}
+        <span></span>
+    </div>
+{% endblock %}

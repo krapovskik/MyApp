@@ -1,0 +1,15 @@
+{% extends 'zayshop/base.html' %}
+{% block Title %} Logout {% endblock %}
+{% block body %}
+        <div class="jumbotron text-center" style="background-color: rgba(164,164,164,0.4);margin-top: 10%;">
+            <h1 class="display-3" style="color: white">Thank you for visiting us {{ user }}!</h1>
+            <p class="lead" style="color: white"><strong>Hope to see you soon</strong></p>
+            <hr>
+            <p style="color: white">
+                Having trouble? <a href="#" >Contact us</a>
+            </p>
+            <p class="lead">
+                <a class="btn btn-primary btn-sm" href="{% url 'zayshop:home' %}" role="button">Continue to homepage</a>
+            </p>
+        </div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'zayshop/base.html' %}
+{% load static %}
+{% block new_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'zayshop/profile.css' %}" />
+{% endblock %}
+{% block Title%} Profile {% endblock %}
+{% block body %}
+    <div class="container" style="margin-top: 10%;">
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-6">
+            <div class="well well-sm">
+                <div class="row">
+                    <div class="col-sm-6 col-md-4">
+                        <img src="{{ user.profile.profile_picture.url }}" alt="" class="img-rounded img-responsive" />
+                    </div>
+                    <div class="col-sm-6 col-md-8">
+                        <h4>
+                            {{ user.username }}</h4>
+                        <small><cite>{{ user.profile.location }}<i class="glyphicon glyphicon-map-marker">
+                        </i></cite></small>
+                        <p>
+                            <i class="glyphicon glyphicon-envelope"></i>{{ user.email }}
+                            <br />
+                            <i class="glyphicon glyphicon-phone"></i>{{ user.profile.phonenumber }}
+                            <br />
+                            <i class="glyphicon glyphicon-gift"></i>{{ user.profile.birthdate }}</p>
+                        <!-- Split button -->
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary">
+                                Social</button>
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                <span class="caret"></span><span class="sr-only">Social</span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="https://www.instagram.com/{{ user.profile.instagram }}" target="_blank">Instagram</a></li>
+                                <li><a href="https://www.facebook.com/{{ user.profile.facebook }}" target="_blank">Facebook</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
