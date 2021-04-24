@@ -1,2 +1,5 @@
 # MyApp
 DjangoApp
+
+
+kosta
