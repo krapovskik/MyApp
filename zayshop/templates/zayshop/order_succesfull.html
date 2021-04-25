@@ -1,0 +1,12 @@
+{% extends 'zayshop/base.html' %}
+{% block Title %} Succesfull {% endblock %}
+{% block body %}
+
+        <div class="jumbotron text-center" style="background-color: rgba(164,164,164,0.4);margin-top: 10%;">
+
+            <h1 class="display-3" style="color: white">Thank you for ordering from us {{ user.first_name }}!</h1>
+            <p class="lead" style="color: white"><strong>You will receive mail about your order instruction. <br> Hope to see you again. </strong></p>
+                            <a class="btn btn-primary btn-sm" href="{% url 'zayshop:home' %}" role="button">Continue to homepage</a>
+            <hr>
+        </div>
+{% endblock %}

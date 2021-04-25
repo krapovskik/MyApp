@@ -30,44 +30,20 @@ class Profile(models.Model):
     instagram = models.CharField(max_length=1000)
     profile_picture = models.FileField(default=False)
 
-    def sum_food(self):
-        if self.user.cartitemfood_set.all().count() > 0:
-            return sum(self.user.cartitemfood_set.all().values_list('food_price', flat=True))
-        else:
-            return 'KKK'
-
-    def sum_drink(self):
-        if self.user.cartitemdrink_set.all().count() > 0:
-            return sum(self.user.cartitemdrink_set.all().values_list('drink_price', flat=True))
-        else:
-            return 0
+    def sum(self):
+        return sum([item.price for item in self.user.cartitem_set.all()])
 
     def __str__(self):
         return self.user.username
 
-#
-# class Item(models.Model):
-#     name = models
-#     price =
-#     details =
-#     photo =
-#     category =
 
-
-class CartItemDrink(models.Model):
+class CartItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    drink_id = models.IntegerField(blank=False)
+    name = models.CharField(max_length=250)
+    price = models.IntegerField()
+    details = models.CharField(max_length=1000, null=True)
+    photo = models.FileField()
+    category = models.CharField(max_length=50)
 
     def __str__(self):
-        return Drink.objects.get(id=self.drink_id).drink_name
-
-
-class CartItemFood(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    food_id = models.IntegerField(blank=False)
-
-    def __str__(self):
-        return Food.objects.get(id=self.food_id).food_name
-
-
-
+        return self.name

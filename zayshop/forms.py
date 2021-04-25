@@ -9,7 +9,7 @@ class UserForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'email']
+        fields = ['first_name', 'last_name', 'username', 'password', 'email']
 
 
 class ProfileForm(forms.ModelForm):
@@ -19,3 +19,9 @@ class ProfileForm(forms.ModelForm):
         widgets = {
             'birthdate': DateInput(attrs={'type': 'date'}),
         }
+
+
+class EmailForm(forms.Form):
+    from_email = forms.EmailField(required=True)
+    subject = forms.CharField(required=True)
+    message = forms.CharField(widget=forms.Textarea, required=True)

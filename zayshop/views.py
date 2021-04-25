@@ -1,11 +1,15 @@
+from smtplib import SMTPException
+
+from django.http import HttpResponse
 from django.views import generic
-from .models import Food, Drink, CartItemFood, CartItemDrink
+from .models import Food, Drink, CartItem
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import View
-from .forms import UserForm, ProfileForm
+from .forms import UserForm, ProfileForm, EmailForm
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
 
 
 class HomeView(generic.TemplateView):
@@ -31,18 +35,25 @@ def add_to_cart(request, pk, name):
         try:
             food = Food.objects.get(id=pk)
             if name in food_list_name:
-                cart_item_food = CartItemFood()
+                cart_item_food = CartItem()
                 cart_item_food.user = user
-                cart_item_food.food_id = food.id
+                cart_item_food.name = food.food_name
+                cart_item_food.price = food.food_price
+                cart_item_food.details = food.food_details
+                cart_item_food.photo = food.food_photo
+                cart_item_food.category = 'food'
                 cart_item_food.save()
         except Food.DoesNotExist:
             pass
         try:
             drink = Drink.objects.get(id=pk)
             if name in drink_list_name:
-                cart_item_drink = CartItemDrink()
+                cart_item_drink = CartItem()
                 cart_item_drink.user = user
-                cart_item_drink.drink_id = drink.id
+                cart_item_drink.name = drink.drink_name
+                cart_item_drink.price = drink.drink_price
+                cart_item_drink.photo = drink.drink_photo
+                cart_item_drink.category = 'drink'
                 cart_item_drink.save()
         except Drink.DoesNotExist:
             pass
@@ -51,6 +62,46 @@ def add_to_cart(request, pk, name):
         return render(request, template_name, {'error_message': 'You must be logged in to make a order!',
                                                'food_list': Food.objects.all(),
                                                'drink_list': Drink.objects.all()})
+
+
+class ContactUsFormView(View):
+    form_email = EmailForm
+    template_name = 'zayshop/contact_us.html'
+
+    def get(self, request):
+        form = self.form_email()
+        return render(request, self.template_name, {'form_email': form})
+
+    def post(self, request):
+        form = self.form_email(request.POST)
+        if form.is_valid():
+            from_email = form.cleaned_data['from_email']
+            subject = form.cleaned_data['subject']
+            message = form.cleaned_data['message']
+            try:
+                send_mail(subject, message, from_email, ['bassfoodpizza@gmail.com'], fail_silently=False)
+            except SMTPException:
+                return HttpResponse('Invalid')
+
+        return render(request, self.template_name, {'form_email': self.form_email(None),
+                                                    'success_message': 'You successfully send your message. Thanks!'})
+
+
+def orderedRedirectView(request, pk):
+    user = User.objects.get(id=pk)
+    if user.is_active:
+        if user.cartitem_set.all().count() != 0:
+            user.cartitem_set.all().delete()
+            user.save()
+            try:
+                send_mail('django test mail', 'test test', 'bassfoodpizza@gmail.com', [user.email])
+            except SMTPException:
+                return HttpResponse('Invalid')
+        else:
+            return render(request, 'zayshop/order_cart.html',
+                          {'error_message': 'Please select your order first.'})
+
+        return render(request, 'zayshop/order_succesfull.html')
 
 
 class OrderCartView(generic.DetailView):

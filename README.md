@@ -1,5 +1,0 @@
-# MyApp
-DjangoApp
-
-
-kosta

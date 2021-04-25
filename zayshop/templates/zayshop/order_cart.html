@@ -2,12 +2,23 @@
 {% block Title %} Order-cart {% endblock %}
 {% block body %}
     <div class="container" style="background-color: #999999;border-radius: 10px;">
-        {% for food in user.cartitemfood_set.all %}
-            <h1 style="color: white;">{{ food }}</h1>
+        {% if error_message %}
+            <h1>{{ error_message }}</h1>
+        {% endif %}
+        {% for item in user.cartitem_set.all %}
+            <h1 style="color: white;">{{ item }} - {{ item.price }}€</h1>
         {% endfor %}
-        {% for drink in user.cartitemdrink_set.all %}
-            <h1 style="color:white;">{{ drink }}</h1>
-        {% endfor %}
-        <span></span>
+        <hr>
+        <h1 style="color:white;">Total:</h1>
+        <h1 style="color: white;">{{ user.profile.sum }}</h1>
+        <!-- Make order  -->
+        <form action="{% url 'zayshop:make_order' user.id %}" method="post" style="display: inline;">
+            {% csrf_token %}
+            <input type="hidden" name="user_id" value="{{ user.id }}" />
+            <button type="submit" class="btn btn-default btn-sm" style="margin-top: 2.5%;margin-bottom: 2.5%;font-size: 15px">
+                <span class="glyphicon glyphicon-check"></span>
+                Make order
+            </button>
+        </form>
     </div>
 {% endblock %}
