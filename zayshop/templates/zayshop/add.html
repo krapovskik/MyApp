@@ -1,0 +1,14 @@
+{% extends 'zayshop/base.html' %}
+{% block Title %} Add {% endblock %}
+{% block body %}
+    <div class="container">
+        <a href="{% url 'zayshop:add_food' %}">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            Add food
+        </a>
+        <a href="{% url 'zayshop:add_drink' %}">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            Add drink
+        </a>
+    </div>
+{% endblock %}

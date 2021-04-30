@@ -55,6 +55,14 @@
                         {{ user.first_name }}
                     </a>
                 </li>
+                {% if user.is_superuser %}
+                    <li class="">
+                        <a href="{% url 'zayshop:add_item' %}">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            Add
+                        </a>
+                    </li>
+                {% endif %}
                 <li class="">
                     <a href="{% url 'zayshop:order_cart' user.id %}">
                         <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>

@@ -10,7 +10,7 @@
         {% endfor %}
         <hr>
         <h1 style="color:white;">Total:</h1>
-        <h1 style="color: white;">{{ user.profile.sum }}</h1>
+        <h1 style="color: white;">{{ user.profile.sum }}€</h1>
         <!-- Make order  -->
         <form action="{% url 'zayshop:make_order' user.id %}" method="post" style="display: inline;">
             {% csrf_token %}

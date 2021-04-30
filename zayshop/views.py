@@ -1,5 +1,4 @@
 from smtplib import SMTPException
-
 from django.http import HttpResponse
 from django.views import generic
 from .models import Food, Drink, CartItem
@@ -10,6 +9,7 @@ from django.views.generic import View
 from .forms import UserForm, ProfileForm, EmailForm
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from django.http import Http404
 
 
 class HomeView(generic.TemplateView):
@@ -24,44 +24,6 @@ class OrderView(generic.TemplateView):
         context['food_list'] = Food.objects.all()
         context['drink_list'] = Drink.objects.all()
         return context
-
-
-def add_to_cart(request, pk, name):
-    template_name = 'zayshop/order.html'
-    user = request.user
-    food_list_name = [food.food_name for food in Food.objects.all()]
-    drink_list_name = [drink.drink_name for drink in Drink.objects.all()]
-    if user.is_authenticated:
-        try:
-            food = Food.objects.get(id=pk)
-            if name in food_list_name:
-                cart_item_food = CartItem()
-                cart_item_food.user = user
-                cart_item_food.name = food.food_name
-                cart_item_food.price = food.food_price
-                cart_item_food.details = food.food_details
-                cart_item_food.photo = food.food_photo
-                cart_item_food.category = 'food'
-                cart_item_food.save()
-        except Food.DoesNotExist:
-            pass
-        try:
-            drink = Drink.objects.get(id=pk)
-            if name in drink_list_name:
-                cart_item_drink = CartItem()
-                cart_item_drink.user = user
-                cart_item_drink.name = drink.drink_name
-                cart_item_drink.price = drink.drink_price
-                cart_item_drink.photo = drink.drink_photo
-                cart_item_drink.category = 'drink'
-                cart_item_drink.save()
-        except Drink.DoesNotExist:
-            pass
-        return redirect('zayshop:order')
-    else:
-        return render(request, template_name, {'error_message': 'You must be logged in to make a order!',
-                                               'food_list': Food.objects.all(),
-                                               'drink_list': Drink.objects.all()})
 
 
 class ContactUsFormView(View):
@@ -87,21 +49,70 @@ class ContactUsFormView(View):
                                                     'success_message': 'You successfully send your message. Thanks!'})
 
 
+def add_to_cart(request, pk, name):
+    template_name = 'zayshop/order.html'
+    user = request.user
+    food_list_name = [food.food_name for food in Food.objects.all()]
+    drink_list_name = [drink.drink_name for drink in Drink.objects.all()]
+    if user.is_authenticated:
+        food_flag = False
+        drink_flag = False
+        try:
+            food = Food.objects.get(id=pk)
+            if name in food_list_name:
+                cart_item_food = CartItem()
+                cart_item_food.user = user
+                cart_item_food.name = food.food_name
+                cart_item_food.price = food.food_price
+                cart_item_food.details = food.food_details
+                cart_item_food.photo = food.food_photo
+                cart_item_food.category = 'food'
+                cart_item_food.save()
+        except Food.DoesNotExist:
+            food_flag = True
+
+        try:
+            drink = Drink.objects.get(id=pk)
+            if name in drink_list_name:
+                cart_item_drink = CartItem()
+                cart_item_drink.user = user
+                cart_item_drink.name = drink.drink_name
+                cart_item_drink.price = drink.drink_price
+                cart_item_drink.photo = drink.drink_photo
+                cart_item_drink.category = 'drink'
+                cart_item_drink.save()
+        except Drink.DoesNotExist:
+            drink_flag = True
+
+        if food_flag and drink_flag:
+            raise Http404
+        else:
+            return redirect('zayshop:order')
+    else:
+        return render(request, template_name, {'error_message': 'You must be logged in to make an order!',
+                                               'food_list': Food.objects.all(),
+                                               'drink_list': Drink.objects.all()})
+
+
 def orderedRedirectView(request, pk):
     user = User.objects.get(id=pk)
     if user.is_active:
         if user.cartitem_set.all().count() != 0:
-            user.cartitem_set.all().delete()
-            user.save()
             try:
                 send_mail('django test mail', 'test test', 'bassfoodpizza@gmail.com', [user.email])
             except SMTPException:
                 return HttpResponse('Invalid')
+            user.cartitem_set.all().delete()
+            user.save()
         else:
             return render(request, 'zayshop/order_cart.html',
                           {'error_message': 'Please select your order first.'})
 
         return render(request, 'zayshop/order_succesfull.html')
+
+
+class AddView(generic.TemplateView):
+    template_name = 'zayshop/add.html'
 
 
 class OrderCartView(generic.DetailView):
@@ -116,16 +127,11 @@ class FoodView(generic.ListView):
     paginate_by = 3
 
 
-class DrinkView(generic.ListView):
-    template_name = 'zayshop/drink.html'
-    model = Drink
-    context_object_name = 'drink_list'
-    paginate_by = 3
-
-
-class PizzaView(generic.DetailView):
-    template_name = 'zayshop/pizzadetail.html'
+class FoodCreateView(generic.CreateView):
     model = Food
+    fields = ['food_name', 'food_price', 'food_details', 'food_photo']
+    template_name = 'zayshop/food_template.html'
+    success_url = reverse_lazy('zayshop:add_food')
 
 
 class FoodDeleteView(generic.DeleteView):
@@ -133,9 +139,42 @@ class FoodDeleteView(generic.DeleteView):
     success_url = reverse_lazy('zayshop:food')
 
 
+class FoodUpdateView(generic.UpdateView):
+    model = Food
+    fields = ['food_name', 'food_price', 'food_details', 'food_photo']
+    template_name = 'zayshop/food_template.html'
+    success_url = reverse_lazy('zayshop:food')
+
+
+class DrinkView(generic.ListView):
+    template_name = 'zayshop/drink.html'
+    model = Drink
+    context_object_name = 'drink_list'
+    paginate_by = 3
+
+
+class DrinkCreateView(generic.CreateView):
+    model = Drink
+    fields = ['drink_name', 'drink_price', 'drink_photo']
+    template_name = 'zayshop/drink_template.html'
+    success_url = reverse_lazy('zayshop:add_drink')
+
+
 class DrinkDeleteView(generic.DeleteView):
     model = Drink
     success_url = reverse_lazy('zayshop:drink')
+
+
+class DrinkUpdateView(generic.UpdateView):
+    model = Drink
+    fields = ['drink_name', 'drink_price', 'drink_photo']
+    template_name = 'zayshop/drink_template.html'
+    success_url = reverse_lazy('zayshop:drink')
+
+
+class PizzaView(generic.DetailView):
+    template_name = 'zayshop/pizzadetail.html'
+    model = Food
 
 
 class ProfileView(generic.DetailView):

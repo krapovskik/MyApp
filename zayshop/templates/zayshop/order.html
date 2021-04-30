@@ -9,8 +9,11 @@
         </div>
     {% endif %}
     <div class="container">
-            {% for food in food_list %}
-                <div class="col-sm-4 col-lg-2" style="margin-top: 5%;">
+        <h1 style="color: white; text-align: center">Order your food!</h1>
+        <ul class="list-inline" style="margin-left: 7%;">
+                    {% for food in food_list %}
+                        <li class="list-inline-item">
+                            <div style="margin-top: 5%;">
                                 <div class="thumbnail">
                                     <a href="#">
                                         <img src="{{ food.food_photo.url }}" class="img-responsive" style="width: 300px;height: 150px;">
@@ -20,16 +23,17 @@
                                         <h4>{{ food.food_price }}€</h4>
 
                                         <!-- Add to cart -->
-                                        <a href="{% url 'zayshop:add_to_cart' food.id food.food_name %}" class="btn btn-primary btn-sm" role="button">Add to cart</a>
-
+                                        <div style="text-align: center">
+                                            <a href="{% url 'zayshop:add_to_cart' food.id food.food_name %}" class="btn btn-primary btn-sm" role="button">Add to cart</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-            {% endfor %}
-        </div>
-        <div class="container">
-            {% for drink in drink_list %}
-                <div class="col-sm-4 col-lg-2" style="margin-top: 5%;">
+                        </li>
+                    {% endfor %}
+                    {% for drink in drink_list %}
+                        <li class="list-inline-item">
+                            <div style="margin-top: 5%;">
                                 <div class="thumbnail">
                                     <a href="#">
                                         <img src="{{ drink.drink_photo.url }}" class="img-responsive" style="width: 300px;height: 150px;">
@@ -39,12 +43,15 @@
                                         <h4>{{ drink.drink_price }}€</h4>
 
                                         <!-- Add to cart -->
-                                        <a href="{% url 'zayshop:add_to_cart' drink.id drink.drink_name %}" class="btn btn-primary btn-sm" role="button">Add to cart</a>
-
+                                        <div style="text-align: center">
+                                            <a href="{% url 'zayshop:add_to_cart' drink.id drink.drink_name %}" class="btn btn-primary btn-sm" role="button">Add to cart</a>
+                                        </div>
 
                                     </div>
                                 </div>
                             </div>
-            {% endfor %}
-        </div>
+                        </li>
+                    {% endfor %}
+        </ul>
+    </div>
 {% endblock %}
